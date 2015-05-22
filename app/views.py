@@ -68,3 +68,8 @@ def index():
                            title='Home',
                            user=user,
                            posts=posts)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
