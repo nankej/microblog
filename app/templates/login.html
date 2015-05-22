@@ -2,7 +2,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<script type="text/javascript">
+
+<!--<script type="text/javascript">
 function set_openid(openid, pr)
 {
     u = openid.search('<username>')
@@ -14,7 +15,12 @@ function set_openid(openid, pr)
     form = document.forms['login'];
     form.elements['openid'].value = openid
 }
-</script>
+</script>-->
+
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<meta name="google-signin-client_id" content="275647418467-rspvrir14vha27gpbdojkc23ganmgb4a.apps.googleusercontent.com">
+<div class="g-signin2" data-onsuccess="onSignIn"></div>
+
 <h1>Sign In</h1>
 <form action="" method="post" name="login">
     {{ form.hidden_tag() }}
