@@ -4,6 +4,8 @@ from app import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from hashlib import md5
+
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column('user_id',db.Integer , primary_key=True)
@@ -11,6 +13,8 @@ class User(db.Model):
     password = db.Column('password' , db.String(250))
     email = db.Column('email',db.String(50),unique=True , index=True)
     registered_on = db.Column('registered_on' , db.DateTime)
+    about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime)
 
     def __init__(self , username ,password , email):
         self.username = username
@@ -38,6 +42,9 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % (self.username)
+
+    def avatar(self, size):
+        return 'http://www.gravatar.com/avatar/%s?d=mm&s=%d' % (md5(self.email.encode('utf-8')).hexdigest(), size)
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True)

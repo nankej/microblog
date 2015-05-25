@@ -2,6 +2,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager
 from .models import User
+from datetime import datetime
 
 
 # index view function suppressed for brevity
@@ -12,11 +13,11 @@ def index():
     user = g.user
     posts = [
         {
-            'author': {'nickname': 'John'},
+            'author': {'username': 'John'},
             'body': 'Beautiful day in Portland!'
         },
         {
-            'author': {'nickname': 'Susan'},
+            'author': {'username': 'Susan'},
             'body': 'The Avengers movie was so cool!'
         }
     ]
@@ -68,3 +69,22 @@ def load_user(id):
 @app.before_request
 def before_request():
     g.user = current_user
+    if g.user.is_authenticated():
+        g.user.last_seen = datetime.utcnow()
+        db.session.add(g.user)
+        db.session.commit()
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first()
+    if user == None:
+        flash('User %s not found.' % username)
+        return redirect(url_for('index'))
+    posts = [
+        {'author': user, 'body': 'Test post #1'},
+        {'author': user, 'body': 'Test post #2'}
+    ]
+    return render_template('user.html',
+                           user=user,
+                           posts=posts)
